@@ -37,7 +37,7 @@ func (h *addIncomeHandler) AddIncome(c *gin.Context) {
 
 	err = h.addIncome(trans)
 	if err != nil {
-		c.JSON(response.NewResponseError(http.StatusInternalServerError, response.WriteError("U0500", err))
+		c.JSON(response.NewResponseError(http.StatusInternalServerError, response.WriteError("U0500", err)))
 		return
 	}
 
