@@ -16,8 +16,8 @@ type Config struct {
 type AppConstant string
 
 type AppConstants struct {
-	TranssactionIncomeType  AppConstant
-	TranssactionExpenseType AppConstant
+	TransactionIncomeType  AppConstant
+	TransactionExpenseType AppConstant
 }
 
 type Database struct {
@@ -30,18 +30,23 @@ type Database struct {
 }
 
 func LoadEnv() *Config {
-	slog.Info("Start to load env")
+	slog.Info("[env] start loading env")
 	err := godotenv.Load("./configs/.env")
 	if err != nil {
-		slog.Error("unable to load .env file: ", err)
+		slog.Error("[env] unable to load .env file", "error", err)
 	}
 
 	cfg := &Config{}
 	err = env.Parse(cfg)
 	if err != nil {
-		slog.Error("unable to parse ennvironment variables: ", err)
+		slog.Error("[env] unable to parse ennvironment variables", "error", err)
 		panic(0)
 	}
+
+	cfg.AppConstants.TransactionIncomeType = "INCOME"
+	cfg.AppConstants.TransactionExpenseType = "EXPENSE"
+
+	slog.Info("[env] loading env complete")
 
 	return cfg
 }

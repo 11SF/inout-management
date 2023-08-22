@@ -8,6 +8,7 @@ import (
 
 type Service interface {
 	AddIncome(trans *datamodel.Transaction) error
+	GetListIncome(uuid string) (transaction []*datamodel.Transaction, err error)
 }
 
 type service struct {

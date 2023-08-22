@@ -14,6 +14,7 @@ type IExpenseRepositoryDB interface {
 }
 
 func NewExpenseRepository(db *gorm.DB) *ExpenseRepositoryDB {
+	db.AutoMigrate(&datamodel.Transaction{})
 	return &ExpenseRepositoryDB{db}
 }
 

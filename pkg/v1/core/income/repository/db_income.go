@@ -11,9 +11,11 @@ type IncomeRepositoryDB struct {
 
 type IIncomeRepositoryDB interface {
 	AddIncome(trans *datamodel.Transaction) error
+	GetIncome(uuid string) ([]*datamodel.Transaction, error)
 }
 
 func NewIncomeRepositoryDB(db *gorm.DB) *IncomeRepositoryDB {
+	db.AutoMigrate(&datamodel.Transaction{})
 	return &IncomeRepositoryDB{db}
 }
 
@@ -22,4 +24,13 @@ func (repo *IncomeRepositoryDB) AddIncome(trans *datamodel.Transaction) error {
 		return err
 	}
 	return nil
+}
+
+func (repo *IncomeRepositoryDB) GetIncome(uuid string) ([]*datamodel.Transaction, error) {
+	transactions := []*datamodel.Transaction{}
+	err := repo.db.Where("user_uuid = ?", uuid).Find(&transactions).Error
+	if err != nil {
+		return nil, err
+	}
+	return transactions, nil
 }

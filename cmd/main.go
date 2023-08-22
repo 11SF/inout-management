@@ -8,6 +8,8 @@ import (
 	routers "github.com/11SF/inout-management/pkg"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/exp/slog"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func init() {
@@ -17,19 +19,21 @@ func init() {
 
 func main() {
 
-	slog.Info("Starting Server")
-	// config := &configs.Config{
-	// 	AppEnviroment: "development",
-	// 	AppPort:       8080,
-	// 	AppConstants: configs.AppConstants{
-	// 		TranssactionIncomeType:  "income",
-	// 		TranssactionExpenseType: "expense",
-	// 	},
-	// }
-
+	slog.Info("[server] starting")
 	config := configs.LoadEnv()
 
-	server := routers.NewRouters(nil, nil, config).InitRouters()
+	slog.Info("[database] connecting to database")
+	dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=%v TimeZone=Asia/Bangkok", config.Database.Host, config.Database.Username, config.Database.Password, config.Database.DatabaseName, config.Database.Port, config.Database.SSL)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		SkipDefaultTransaction: true,
+	})
+	if err != nil {
+		slog.Error("[database] fail to connect database", "with", err.Error())
+		panic(0)
+	}
+	slog.Info("[database] connect to database success")
+
+	server := routers.NewRouters(db, nil, config).InitRouters()
 	startServer(server, config)
 }
 
