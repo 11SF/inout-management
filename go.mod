@@ -2,7 +2,7 @@ module github.com/11SF/inout-management
 
 go 1.20
 
-replace github.com/11SF/go-common => github.com/11SF/go-common v1.0.6
+replace github.com/11SF/go-common => github.com/11SF/go-common v1.0.7
 
 require (
 	github.com/caarlos0/env/v6 v6.10.1

@@ -39,15 +39,3 @@ func NewResponse(c *gin.Context, httpStatusCode int, data interface{}) {
 func NewResponseError(c *gin.Context, httpStatusCode int, err error) {
 	c.JSON(httpStatusCode, err)
 }
-
-// func NewResponse(httpStatusCode int, data interface{}, err error) (int, Response) {
-// 	if err != nil {
-// 		return httpStatusCode, Response{
-// 			Completed: false,
-// 			Message:   err.Error(),
-// 		}
-// 	}
-// 	return httpStatusCode, Response{
-// 		Completed: true,
-// 	}
-// }
