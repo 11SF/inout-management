@@ -15,7 +15,7 @@ func (s *service) AddExpense(trans *datamodel.Transaction) error {
 	err := s.db.AddExpense(trans)
 	if err != nil {
 		slog.Error("add expense error with: ", err.Error())
-		return response.WriteError("R0500", err)
+		return response.NewError("RP500", err.Error())
 	}
 	slog.Info("Complete to add expense")
 

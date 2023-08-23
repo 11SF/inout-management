@@ -32,12 +32,13 @@ func (router *Routers) InitRouters() *gin.Engine {
 	contextPath := r.Group("/inout-management")
 	v1 := contextPath.Group("/v1")
 
-	expenseRepositoryDB := expenserepository.NewExpenseRepository(router.db)
+	expenseRepositoryDB := expenserepository.NewExpenseRepository(router.db, router.config)
 	expenseService := coreexpense.NewService(expenseRepositoryDB, router.config)
 	addExpenseHandler := apiexpense.NewAddExpenseHandler(expenseService.AddExpense)
+	// getExpenseHandler := apiexpense
 	v1.POST("/add-expense", addExpenseHandler.AddExpense)
 
-	incomeRepositoryDB := incomerepository.NewIncomeRepositoryDB(router.db)
+	incomeRepositoryDB := incomerepository.NewIncomeRepositoryDB(router.db, router.config)
 	incomeService := coreincome.NewService(incomeRepositoryDB, router.config)
 	addIncomeHandler := apiincome.NewAddIncomeHandler(incomeService.AddIncome)
 	getListIncomeHandler := apiincome.NewgetListIncomeHandler(incomeService.GetListIncome)

@@ -1,7 +1,6 @@
 package apiexpense
 
 import (
-	"errors"
 	"net/http"
 
 	coreexpense "github.com/11SF/inout-management/pkg/v1/core/expense"
@@ -27,7 +26,7 @@ func (h *addExpenseHandler) AddExpense(c *gin.Context) {
 	request := &addExpenseRequest{}
 	err := c.BindJSON(&request)
 	if err != nil {
-		response.NewResponseError(http.StatusBadRequest, nil, response.WriteError("H0400", errors.New("invalid request")))
+		response.NewResponseError(c, http.StatusBadRequest, response.NewError("RQ400", "invalid request"))
 		return
 	}
 
@@ -37,9 +36,9 @@ func (h *addExpenseHandler) AddExpense(c *gin.Context) {
 
 	err = h.addExpense(trans)
 	if err != nil {
-		response.NewResponseError(http.StatusInternalServerError, err)
+		response.NewResponseError(c, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, nil)
+	response.NewResponse(c, http.StatusOK, nil)
 }

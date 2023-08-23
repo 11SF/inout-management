@@ -1,7 +1,6 @@
 package apiincome
 
 import (
-	"errors"
 	"net/http"
 
 	coreincome "github.com/11SF/inout-management/pkg/v1/core/income"
@@ -31,15 +30,15 @@ func (h *getListIncomeHandler) GetListIncome(c *gin.Context) {
 	request := &getListIncomeRequest{}
 	err := c.BindJSON(&request)
 	if err != nil {
-		c.JSON(response.NewResponseError(http.StatusBadRequest, nil, response.WriteError("H0400", errors.New("invalid request"))))
+		response.NewResponseError(c, http.StatusBadRequest, response.NewError("RQ400", "invalid request"))
 		return
 	}
 
 	transactionList, err := h.getListIncome("") //mock uuid
 	if err != nil {
-		c.JSON(response.NewResponseError(http.StatusInternalServerError, nil, err))
+		response.NewResponseError(c, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(response.NewResponse(http.StatusOK, &getListIncomeResponse{IncomeList: transactionList}))
+	response.NewResponse(c, http.StatusOK, &getListIncomeResponse{IncomeList: transactionList})
 }

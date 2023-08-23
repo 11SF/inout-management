@@ -15,7 +15,7 @@ func (s *service) AddIncome(trans *datamodel.Transaction) error {
 	err := s.db.AddIncome(trans)
 	if err != nil {
 		slog.Error("add income error with: ", err.Error())
-		return response.WriteError("R0500", err)
+		return response.NewError("RP500", err.Error())
 	}
 	slog.Info("Complete to add income")
 

@@ -1,7 +1,6 @@
 package apiincome
 
 import (
-	"errors"
 	"net/http"
 
 	coreincome "github.com/11SF/inout-management/pkg/v1/core/income"
@@ -27,7 +26,7 @@ func (h *addIncomeHandler) AddIncome(c *gin.Context) {
 	request := &addIncomeRequest{}
 	err := c.BindJSON(&request)
 	if err != nil {
-		c.JSON(response.NewResponseError(http.StatusBadRequest, nil, response.WriteError("H0400", errors.New("invalid request"))))
+		response.NewResponseError(c, http.StatusBadRequest, response.NewError("RQ400", "invalid request"))
 		return
 	}
 
@@ -37,9 +36,9 @@ func (h *addIncomeHandler) AddIncome(c *gin.Context) {
 
 	err = h.addIncome(trans)
 	if err != nil {
-		c.JSON(response.NewResponseError(http.StatusInternalServerError, response.WriteError("U0500", err)))
+		response.NewResponseError(c, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(response.NewResponse(http.StatusOK, nil))
+	response.NewResponse(c, http.StatusOK, nil)
 }

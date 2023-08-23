@@ -1,12 +1,14 @@
 package repository
 
 import (
+	"github.com/11SF/inout-management/configs"
 	"github.com/11SF/inout-management/pkg/v1/datamodel"
 	"gorm.io/gorm"
 )
 
 type IncomeRepositoryDB struct {
-	db *gorm.DB
+	db     *gorm.DB
+	config *configs.Config
 }
 
 type IIncomeRepositoryDB interface {
@@ -14,9 +16,9 @@ type IIncomeRepositoryDB interface {
 	GetIncome(uuid string) ([]*datamodel.Transaction, error)
 }
 
-func NewIncomeRepositoryDB(db *gorm.DB) *IncomeRepositoryDB {
+func NewIncomeRepositoryDB(db *gorm.DB, config *configs.Config) *IncomeRepositoryDB {
 	db.AutoMigrate(&datamodel.Transaction{})
-	return &IncomeRepositoryDB{db}
+	return &IncomeRepositoryDB{db, config}
 }
 
 func (repo *IncomeRepositoryDB) AddIncome(trans *datamodel.Transaction) error {
@@ -28,7 +30,7 @@ func (repo *IncomeRepositoryDB) AddIncome(trans *datamodel.Transaction) error {
 
 func (repo *IncomeRepositoryDB) GetIncome(uuid string) ([]*datamodel.Transaction, error) {
 	transactions := []*datamodel.Transaction{}
-	err := repo.db.Where("user_uuid = ?", uuid).Find(&transactions).Error
+	err := repo.db.Where("user_uuid = ? and transaction_type = ", uuid, repo.config.AppConstants.TransactionIncomeType).Find(&transactions).Error
 	if err != nil {
 		return nil, err
 	}

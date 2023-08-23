@@ -1,4 +1,4 @@
-package coreincome
+package coreexpense
 
 import (
 	"github.com/11SF/inout-management/pkg/v1/datamodel"
@@ -6,10 +6,10 @@ import (
 	"golang.org/x/exp/slog"
 )
 
-type GetListIncomeFunc func(uuid string) ([]*datamodel.Transaction, error)
+type GetListExpenseFunc func(uuid string) ([]*datamodel.Transaction, error)
 
-func (s *service) GetListIncome(uuid string) (transaction []*datamodel.Transaction, err error) {
-	transaction, err = s.db.GetIncome(uuid)
+func (s *service) GetListExpense(uuid string) ([]*datamodel.Transaction, error) {
+	transaction, err := s.db.GetExpense(uuid)
 	if err != nil {
 		slog.Info("fail to get transaction list", "with", err.Error())
 		return transaction, response.NewError("RP500", err.Error())
