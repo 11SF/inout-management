@@ -12,12 +12,15 @@ func (s *service) AddExpense(trans *datamodel.Transaction) error {
 
 	slog.Info("Start to add expense")
 	trans.TransactionType = string(s.config.AppConstants.TransactionExpenseType)
+
+	slog.Info("add expense to database")
 	err := s.db.AddExpense(trans)
 	if err != nil {
-		slog.Error("add expense error with: ", err.Error())
+		slog.Error("add expense to database error with: ", err.Error())
 		return response.NewError("RP500", err.Error())
 	}
-	slog.Info("Complete to add expense")
+	slog.Info("add expense to database success")
 
+	slog.Info("Complete to add expense")
 	return nil
 }

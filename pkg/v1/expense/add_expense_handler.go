@@ -14,7 +14,9 @@ type addExpenseHandler struct {
 }
 
 type addExpenseRequest struct {
-	Amount float64
+	Amount   float64 `json:"amount"`
+	UserUUID string  `json:"user_uuid"`
+	Message  string  `json:"message"`
 }
 
 func NewAddExpenseHandler(addExpense coreexpense.AddExpenseFunc) *addExpenseHandler {
@@ -31,7 +33,9 @@ func (h *addExpenseHandler) AddExpense(c *gin.Context) {
 	}
 
 	trans := &datamodel.Transaction{
-		Amount: request.Amount,
+		Amount:   request.Amount,
+		UserUUID: request.UserUUID,
+		Message:  request.Message,
 	}
 
 	err = h.addExpense(trans)

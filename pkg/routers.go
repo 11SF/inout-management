@@ -35,15 +35,16 @@ func (router *Routers) InitRouters() *gin.Engine {
 	expenseRepositoryDB := expenserepository.NewExpenseRepository(router.db, router.config)
 	expenseService := coreexpense.NewService(expenseRepositoryDB, router.config)
 	addExpenseHandler := apiexpense.NewAddExpenseHandler(expenseService.AddExpense)
-	// getExpenseHandler := apiexpense
+	getExpenseHandler := apiexpense.NewgetListExpenseHandler(expenseService.GetListExpense)
 	v1.POST("/add-expense", addExpenseHandler.AddExpense)
+	v1.GET("/get-expense", getExpenseHandler.GetListExpense)
 
 	incomeRepositoryDB := incomerepository.NewIncomeRepositoryDB(router.db, router.config)
 	incomeService := coreincome.NewService(incomeRepositoryDB, router.config)
 	addIncomeHandler := apiincome.NewAddIncomeHandler(incomeService.AddIncome)
 	getListIncomeHandler := apiincome.NewgetListIncomeHandler(incomeService.GetListIncome)
 	v1.POST("/add-income", addIncomeHandler.AddIncome)
-	v1.POST("/get-income", getListIncomeHandler.GetListIncome)
+	v1.GET("/get-income", getListIncomeHandler.GetListIncome)
 
 	return r
 }

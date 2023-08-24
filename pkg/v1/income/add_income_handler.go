@@ -14,7 +14,9 @@ type addIncomeHandler struct {
 }
 
 type addIncomeRequest struct {
-	Amount float64
+	Amount   float64 `json:"amount"`
+	UserUUID string  `json:"user_uuid"`
+	Message  string  `json:"message"`
 }
 
 func NewAddIncomeHandler(addIncome coreincome.AddIncomeFunc) *addIncomeHandler {
@@ -31,7 +33,9 @@ func (h *addIncomeHandler) AddIncome(c *gin.Context) {
 	}
 
 	trans := &datamodel.Transaction{
-		Amount: request.Amount,
+		Amount:   request.Amount,
+		UserUUID: request.UserUUID,
+		Message:  request.Message,
 	}
 
 	err = h.addIncome(trans)
