@@ -1,0 +1,51 @@
+name: Build, push, and deploy to k8s
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@main
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Build container image
+        run: docker build -t registry.digitalocean.com/poc-nsfolk/inout-management:$(echo $GITHUB_SHA | head -c7) .
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1200
+
+      - name: Push image to DigitalOcean Container Registry
+        run: docker push registry.digitalocean.com/poc-nsfolk/inout-management:$(echo $GITHUB_SHA | head -c7)
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+      - run: mv kustomize /usr/local/bin/
+      - run: git config --global user.email "nawapong.sit@gmail.com"
+      - run: git config --global user.name "Nawapong Sitaruno"
+
+      - run: git clone https://11SF:${{ secrets.KUSTOMIZE_REPO_KEY }}@github.com/11SF/inout-management-kustomize.git manifest
+      - run: dir=$(pwd)
+      - working-directory: ./manifest/overlays/prod
+        run: kustomize edit set image registry.digitalocean.com/poc-nsfolk/inout-management:$(echo $GITHUB_SHA | head -c7)
+        
+
+      - working-directory: ./manifest/overlays/prod
+        run: cat kustomization.yaml
+      # - run: cd "${dir}/manifest"
+      - working-directory: ./manifest
+        run: git status && git add . && git commit -am 'prod image update' && git push origin master
+
+      - run: rm -rf manifest
+
