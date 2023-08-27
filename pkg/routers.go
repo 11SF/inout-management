@@ -1,6 +1,8 @@
 package routers
 
 import (
+	"net/http"
+
 	"github.com/11SF/inout-management/configs"
 	coreexpense "github.com/11SF/inout-management/pkg/v1/core/expense"
 	expenserepository "github.com/11SF/inout-management/pkg/v1/core/expense/repository"
@@ -28,6 +30,10 @@ func (router *Routers) InitRouters() *gin.Engine {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	r := gin.New()
+
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, nil)
+	})
 
 	contextPath := r.Group("/inout-management")
 	v1 := contextPath.Group("/v1")
